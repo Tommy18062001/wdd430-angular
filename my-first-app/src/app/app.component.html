@@ -1,14 +1,29 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    This is my first project
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
-</div>
-
-<!-- First code -->
 <div class="container">
-  <input type="text" [(ngModel)]="name">
-  <p>{{ name }}</p>
-  <button class="btn-danger">Test Bootstrap Styling</button>
+  <div class="row">
+    <div class="col-xs-12">
+      <h3>I am in the component</h3>
+      <hr>
+      <!-- <app-servers></app-servers> -->
+      <!-- <div app-servers></div> -->
+      <div class="app-servers"></div>
+    </div>
+    <div class="col-xs-12">
+      <app-success-alert></app-success-alert>
+      <app-warning-alert></app-warning-alert>
+    </div>
+
+    <!-- Data binding assignment -->
+    <!-- <div class="col-xs-12">
+      <h3>Data Binding Assignemnt</h3>
+      <input type="text" class="form-control" [(ngModel)]="userName" >
+      <p> {{userName}} </p>
+      <button class="btn btn-primary" [disabled]="userName === ''" (click)="userName = ''">Reset Username</button>
+    </div> -->
+
+    <div class="col-xs-12">
+      <h3>Practicing directives</h3>
+      <button class="btn btn-primary" (click)="updateStatus()">Display Details</button>
+      <p *ngIf="isClicked">Secret password = Tuna</p>
+    </div>
+  </div>
 </div>
