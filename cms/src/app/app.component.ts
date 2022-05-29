@@ -5,11 +5,6 @@ import { Component, Input } from '@angular/core';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  selectedFeature: string = 'documents';
-
-  switchView(selectedFeature: string){
-    this.selectedFeature = selectedFeature;
-  }
-
+export class AppComponent {  
+  
 }

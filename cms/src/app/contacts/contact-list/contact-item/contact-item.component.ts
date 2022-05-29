@@ -8,6 +8,7 @@ import { Contact } from '../../contact.model';
 })
 export class ContactItemComponent implements OnInit {
   @Input() contact!: Contact;
+  @Input() index!: number;
   //emit an event for the parent component to be informed
   @Output() contactSelected = new EventEmitter<Contact>()
 
@@ -16,7 +17,4 @@ export class ContactItemComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onContactSelected() {
-    this.contactSelected.emit()
-  }
 }

@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Document } from '../../document.model';
 
 @Component({
@@ -8,10 +9,14 @@ import { Document } from '../../document.model';
 })
 export class DocumentItemComponent implements OnInit {
   @Input() document!: Document;
+  @Input() index!: number;
+  documentService: any;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
+
+  
 
 }
