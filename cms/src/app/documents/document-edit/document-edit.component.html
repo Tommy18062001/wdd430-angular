@@ -14,7 +14,7 @@
               name="name"
               [ngModel]="document?.name"
               required
-              #name
+              #name="ngModel"
               >
           </div>
         </div>
@@ -47,12 +47,12 @@
               name="url"
               [ngModel]="document?.url"
               required
-              #url
+              #url="ngModel"
               >
           </div>
         </div>
 
-        <div class="alert alert-danger" *ngIf="!f.valid">
+        <div class="alert alert-danger" *ngIf="!name.valid || !url.valid">
           The Document Title and Document URL are required fields.
         </div>
   
