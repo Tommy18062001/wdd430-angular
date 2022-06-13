@@ -12,6 +12,10 @@
         [contact]="contactEl"
         [index]="i"
         (contactSelected)="onSelected(contactEl)"
+        dnd-draggable
+        [dragEnabled]="true"
+        [dragData]="contactEl"
+        [dropZones]="['contactGroup']" 
         ></app-contact-item>
     </div>
 </div>

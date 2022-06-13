@@ -20,4 +20,13 @@
         <p>Email: {{ contact.email }}</p>
         <p>Phone: {{ contact.phone }}</p>
     </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <app-contact-item 
+            *ngFor="let contactEl of contact.group; let i = index;"
+            [contact]="contactEl"
+            [index]="i"
+            ></app-contact-item>
+        </div>
+    </div>
 </div>

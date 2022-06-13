@@ -18,6 +18,9 @@ import { DropdownDirective } from './dropdown.directive';
 import { AppRoutingModule } from './app-routing.module';
 import { DocumentEditComponent } from './documents/document-edit/document-edit.component';
 import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
+import { FormsModule } from '@angular/forms';
+import { DndModule } from 'ng2-dnd'
+import { ContactService } from './contacts/contact.service';
 
 @NgModule({
   declarations: [
@@ -40,9 +43,11 @@ import { ContactEditComponent } from './contacts/contact-edit/contact-edit.compo
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    DndModule.forRoot(),
   ],
-  providers: [],
+  providers: [ContactService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
