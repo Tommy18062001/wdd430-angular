@@ -1,21 +1,42 @@
-<div class="row">
-    <div class="col-xs-12 ">
-        <h2 class="pull-left">Contacts</h2>
-        <button class="btn btn-success pull-right" style="margin-top: 20px;" routerLink="new">New Contact</button>
+<div class="panel panel-default">
+  <div class="panel-heading" style="padding: 25px;">
+    <div class="row">
+      <span class="title pad-left-right">Contacts</span>
     </div>
+    <div class="row">
+      <div class="input-group pull-left pad-left-right col-xs-7">
+        <!-- Add the search box input field here -->
+        <input
+          class="form-control"
+          type="text"
+          (keyup)="search(searchBox.value)"
+          placeholder="Enter a search value"
+          #searchBox
+        />
+        <div
+          class="glyphicon glyphicon-search input-group-addon"
+          (click)="search(searchBox.value)"
+        ></div>
+      </div>
+      <div class="pull-right pad-left-right">
+        <a class="btn btn-success" [routerLink]="['new']">New Contact</a>
+      </div>
+    </div>
+  </div>
 </div>
-<hr>
+
+<hr />
 <div class="row">
-    <div class="col-xs-12">
-        <app-contact-item 
-        *ngFor="let contactEl of contacts; let i = index;"
-        [contact]="contactEl"
-        [index]="i"
-        (contactSelected)="onSelected(contactEl)"
-        dnd-draggable
-        [dragEnabled]="true"
-        [dragData]="contactEl"
-        [dropZones]="['contactGroup']" 
-        ></app-contact-item>
-    </div>
+  <div class="col-xs-12">
+    <app-contact-item
+      *ngFor="let contactEl of contacts | contactsFilter: term; let i = index"
+      [contact]="contactEl"
+      [index]="i"
+      (contactSelected)="onSelected(contactEl)"
+      dnd-draggable
+      [dragEnabled]="true"
+      [dragData]="contactEl"
+      [dropZones]="['contactGroup']"
+    ></app-contact-item>
+  </div>
 </div>

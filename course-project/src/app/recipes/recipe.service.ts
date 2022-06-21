@@ -8,25 +8,31 @@ import { Recipe } from "./recipe.model";
 export class RecipeService {
     recipesChange = new Subject<Recipe[]>();
 
-    private recipes: Recipe[] = [
-        new Recipe("A Tasty Schnitzel",
-                 'You are gonna love this', 
-                 './dark.jpg',
-                 [
-                     new Ingredient('Meat', 1),
-                     new Ingredient('French Fries', 20)
-                 ]),
-        new Recipe("Big Fat Burger", 
-                'What else you need to say?', 
-                './dark.jpg',
-                [
-                    new Ingredient('Buns', 2),
-                    new Ingredient('Bread', 1)
-                ]),
-      ];
+    // private recipes: Recipe[] = [
+    //     new Recipe("A Tasty Schnitzel",
+    //              'You are gonna love this', 
+    //              './dark.jpg',
+    //              [
+    //                  new Ingredient('Meat', 1),
+    //                  new Ingredient('French Fries', 20)
+    //              ]),
+    //     new Recipe("Big Fat Burger", 
+    //             'What else you need to say?', 
+    //             './dark.jpg',
+    //             [
+    //                 new Ingredient('Buns', 2),
+    //                 new Ingredient('Bread', 1)
+    //             ]),
+    //   ];
+    private recipes: Recipe[] = []
 
     constructor(private slService: ShoppingListService) {} 
       
+    setRecipes(recipes: Recipe[]) {
+        this.recipes = recipes;
+        this.recipesChange.next(this.recipes.slice())
+    }
+    
     getRecipes() {
         return this.recipes.slice();
     }
