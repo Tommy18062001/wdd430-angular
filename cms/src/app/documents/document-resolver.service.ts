@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from "@angular/router";
+import { response } from "express";
 import { Document } from "./document.model";
 import { DocumentService } from "./document.service";
 
@@ -14,3 +15,8 @@ export class DocumentResolverService implements Resolve<Document[]> {
     }
 
 }
+
+// .subscribe(
+//     (documentData) => {
+//       this.documentService.documents = documentData.documents;
+// )

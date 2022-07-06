@@ -81,12 +81,11 @@ export class ContactEditComponent implements OnInit {
 }
 
 onSubmit(form: NgForm) {
-  console.log(form.value)
   const value = form.value; // get values from form’s fields
   const newContact = new Contact(value.id, value.name, value.email, value.phone, value.imageUrl, this.groupContacts);
 //   Assign the values in the form fields to the
 //  corresponding properties in the newDocument
-
+  console.log(newContact)
  if (this.editMode == true) {
   this.contactService.updateContact(this.originalContact, newContact)
  } 

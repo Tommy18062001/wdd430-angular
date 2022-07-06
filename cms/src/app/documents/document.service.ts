@@ -1,57 +1,37 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { Document } from './document.model';
-import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
-import { Subject } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {EventEmitter, Injectable} from '@angular/core';
+import {Document} from "./document.model";
+import {Subject} from "rxjs";
+import { map, tap } from 'rxjs';
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {Router} from "@angular/router";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class DocumentService {
-  documents: Document[] = [];
-  maxDocumentId: number;
-
-  documentSelectedEvent = new EventEmitter<Document>();
+  documents:Document[] = []
+  documentSelectedEvent =  new EventEmitter<Document>();
   // documentChangedEvent = new EventEmitter<Document[]>();
-
   documentListChangedEvent = new Subject<Document[]>();
 
-  constructor(private http: HttpClient) {
+  maxDocumentId!:number;
+
+  constructor(private httpClient: HttpClient, private router: Router) {
     this.fetchDocuments().subscribe(
-      (documents: Document[]) => {
-        this.documents = documents;
-        this.maxDocumentId = this.getMaxId();
-        this.documents.sort();
-        this.documentListChangedEvent.next([...this.documents]);
+      (documentList) => {
+        this.documents = documentList;
+        console.log(this.documents)
+        // this.maxDocumentId = this.getMaxId();
+        this.sortAndSend()
+        // this.documentListChangedEvent.next([...this.documents])
       },
       (error: any) => {
         console.error(error);
       }
     );
-    this.maxDocumentId = this.getMaxId();
+    
   }
 
-  fetchDocuments() {
-    return this.http
-      .get<Document[]>(
-        `https://tommycmsproject-default-rtdb.firebaseio.com/documents.json`
-      )
-  }
-
-  // store the document
-  storeDocuments() {
-    const headers = new HttpHeaders();
-    headers.set('Content-Type', 'application/json');
-    this.http
-      .put(
-        'https://tommycmsproject-default-rtdb.firebaseio.com/documents.json',
-        this.documents,
-        { headers }
-      )
-      .subscribe(() => {
-        this.documentListChangedEvent.next([...this.documents]);
-      });
-  }
 
   getDocuments():Document[]{
     return [...this.documents]
@@ -61,64 +41,93 @@ export class DocumentService {
     return this.documents[id];
   }
 
-  addDocument(newDocument: Document) {
-    if (newDocument == undefined || newDocument == null) {
-      return;
-    }
-    this.maxDocumentId++;
-    newDocument.id = this.maxDocumentId.toString();
-    this.documents.push(newDocument);
-    // const documentsListClone = this.documents.slice();
-    // this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments()
+// `https://tommycmsproject-default-rtdb.firebaseio.com/documents.json`
+  fetchDocuments() {
+    return this.httpClient
+      .get<{ message: string, documents: Document[]}>(
+        `http://localhost:3000/documents`
+      
+      ).pipe(
+        map((responseData) => {
+          return responseData.documents
+        })
+      )
   }
 
-  updateDocument(originalDocument: Document, newDocument: Document) {
-    if (
-      originalDocument == undefined ||
-      originalDocument == null ||
-      newDocument == undefined ||
-      newDocument == null
-    ) {
-      return;
-    }
-    const pos = this.documents.indexOf(originalDocument);
-    if (pos < 0) {
-      return;
-    }
+  selectDocument(document: Document){
+    this.documentSelectedEvent.emit(document);
+  }
 
-    newDocument.id = originalDocument.id;
-    this.documents[pos] = newDocument;
-    // const documentsListClone = this.documents.slice();
-    // this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments()
+  sortAndSend(){
+    this.documents.sort();
+    this.documentListChangedEvent.next([...this.documents])
   }
 
   deleteDocument(document: Document) {
-    if (document == undefined || document == null) {
+    if (!document) {
       return;
     }
     const pos = this.documents.indexOf(document);
     if (pos < 0) {
       return;
     }
-
-    this.documents.splice(pos, 1);
-    // const documentsListClone = this.documents.slice();
-    // this.documentListChangedEvent.next(documentsListClone);
-    this.storeDocuments()
+    this.httpClient.delete('http://localhost:3000/documents/' + document.id)
+      .subscribe(
+        () => {
+          this.documents.splice(pos, 1);
+          this.sortAndSend();
+        }
+      );
   }
 
-  /********* New function added ************/
-  getMaxId(): number {
-    let maxId = 0;
-    // for each document in the documents list
-    this.documents.forEach((document) => {
-      let currentId = +document.id;
-      if (currentId > maxId) {
-        maxId = currentId;
+  updateDocument(oldDocument:Document, newDocument:Document){
+    if(!oldDocument || !newDocument){
+      return
+    }
+    const pos = this.documents.indexOf(oldDocument);
+    if(pos<0){
+      return;
+    }
+    newDocument.id = oldDocument.id;
+    // newDocument._id = oldDocument._id;
+
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    this.httpClient.put('http://localhost:3000/documents/' + oldDocument.id,
+      newDocument, { headers: headers })
+      .subscribe(
+        () => {
+          this.documents[pos] = newDocument;
+          this.sortAndSend();
+        }
+      );
+  }
+
+  addDocument(document:Document){
+    if(!document){
+      return
+    }
+    document.id = '';
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    this.httpClient.post<{ message: string, document: Document }>('http://localhost:3000/documents',
+      document,
+      { headers: headers })
+      .subscribe(
+        (responseData) => {
+          // add new document to documents
+          this.documents.push(responseData.document);
+          this.sortAndSend();
+        }
+      );
+  }
+
+  getMaxId():number {
+    let maxid= 0;
+    for(let documentItem of this.documents){
+      const id =+documentItem.id;
+      if(id > maxid){
+        maxid =id;
       }
-    });
-    return maxId;
+    }
+    return maxid;
   }
 }

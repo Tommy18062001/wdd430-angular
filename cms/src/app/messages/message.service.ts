@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { map, Subject } from 'rxjs';
 import { Message } from './message.model';
 import { MOCKMESSAGES } from './MOCKMESSAGES';
 
@@ -10,54 +10,39 @@ import { MOCKMESSAGES } from './MOCKMESSAGES';
 export class MessageService {
   messages: Message[] = [];
   // messageChangedEvent = new EventEmitter<Message[]>();
-  maxMessageId: number;
+  // maxMessageId: number;
   messageListChangedEvent = new Subject<Message[]>()
 
 
-  constructor(private http: HttpClient) { 
-    http
-      .get<Message[]>(
-        `https://tommycmsproject-default-rtdb.firebaseio.com/messages.json`
-      )
+  constructor(private httpClient: HttpClient) { 
+    this.fetchMessages()
       .subscribe(
-        (messages: Message[]) => {
+        (messages) => {
+          // console.log(messages)
           this.messages = messages;
-          this.maxMessageId = this.getMaxId();
-          this.messages.sort();
-          this.messageListChangedEvent.next([...this.messages]);
+          this.sortAndSend()
         },
         (error: any) => {
           console.error(error);
         }
       );
-    this.maxMessageId = this.getMaxId()
   }
 
-
-  storeMessages() {
-    const headers = new HttpHeaders();
-    headers.set('Content-Type', 'application/json');
-    this.http
-      .put(
-        'https://tommycmsproject-default-rtdb.firebaseio.com/messages.json',
-        this.messages,
-        { headers }
-      )
-      .subscribe(() => {
-        this.messageListChangedEvent.next([...this.messages]);
-      });
+  fetchMessages() {
+    return this.httpClient
+    .get<{ message: string, messages: Message[]}>(
+      `http://localhost:3000/messages`
+    
+    ).pipe(
+      map((responseData) => {
+        return responseData.messages
+      })
+    )
   }
 
-  getMaxId(): number {
-    let maxId = 0;
-    // for each message in the messags list
-    this.messages.forEach(message => {
-      let currentId = +message.id
-      if (currentId > maxId) {
-        maxId = currentId
-      }
-    });
-    return maxId
+  sortAndSend(){
+    this.messages.sort();
+    this.messageListChangedEvent.next([...this.messages])
   }
 
   getMessages(): Message[] {
@@ -73,9 +58,20 @@ export class MessageService {
     return null
   }
 
-  addMessage(message: Message) {
-    this.messages.push(message);
-    // this.messageListChangedEvent.next(this.messages.slice())
-    this.storeMessages()
+  addMessage(message:Message){
+    if(!message){
+      return
+    }
+    message.id = '';
+    const headers = new HttpHeaders({'Content-Type': 'application/json'});
+    this.httpClient.post<{ message: string, createdMessage: Message }>('http://localhost:3000/messages',
+      message,
+      { headers: headers })
+      .subscribe(
+        (responseData) => {
+          this.messages.push(responseData.createdMessage);
+          this.sortAndSend();
+        }
+      );
   }
 }

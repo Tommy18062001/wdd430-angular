@@ -6,6 +6,9 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+// import Mongoose
+var mongoose = require('mongoose');
+
 // import the routing file to handle the default (index) route
 var index = require('./server/routes/app');
 
@@ -13,6 +16,18 @@ var index = require('./server/routes/app');
 const messageRoutes = require('./server/routes/messages');
 const contactRoutes = require('./server/routes/contacts');
 const documentsRoutes = require('./server/routes/documents');
+
+// establish a connection to the mongo database
+mongoose.connect('mongodb+srv://tommysylver:XNbue0GeI4DtQ8m1@cluster0.5fotetf.mongodb.net/cms?retryWrites=true&w=majority',
+   { useNewUrlParser: true }, (err, res) => {
+      if (err) {
+         console.log('Connection failed: ' + err);
+      }
+      else {
+         console.log('Connected to database!');
+      }
+   }
+);
 
 var app = express(); // create an instance of express
 
@@ -67,3 +82,4 @@ const server = http.createServer(app);
 server.listen(port, function() {
   console.log('API running on localhost: ' + port)
 });
+
